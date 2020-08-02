@@ -127,7 +127,7 @@ def insertInfo(plate_number, decision_flag, rejection_reason):
               }
     information.insert_one(record)
 
-# Image File
+# Image File - example
 img_file = '13.png'
 
 # Create my database with Mongo
