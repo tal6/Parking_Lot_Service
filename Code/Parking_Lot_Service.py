@@ -57,7 +57,7 @@ def applyOCR(license_plate_image, img_file):
     url_api = "https://api.ocr.space/parse/image"
 
     # We must send the image as bytes and compressed because we have 1MB in the free version
-    encode_params = [int(cv2.IMWRITE_JPEG_QUALITY),90]
+    encode_params = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
     _, compressed_image = cv2.imencode('.jpg', license_plate_image, encode_params)
     file_bytes = io.BytesIO(compressed_image)
 
