@@ -13,6 +13,7 @@ import requests
 import io
 import json  
 import sys
+import os
 from datetime import datetime
 from pymongo import MongoClient
 
@@ -26,6 +27,12 @@ def sumOfDigits(n):
 def isDivideBy7(n):
     if n%7 == 0:
         return True
+
+def convertPngToJpg(png_image_file):
+    img = cv2.imread(png_image_file)
+    cv2.imwrite(png_image_file[:-4] + '.jpg', img)
+    jpg_file = png_image_file[:-4] + '.jpg'
+    return jpg_file
 
 # Function for process the plate image before pass to the OCR
 def preProccessing(img_file):
@@ -50,7 +57,8 @@ def applyOCR(license_plate_image, img_file):
     url_api = "https://api.ocr.space/parse/image"
 
     # We must send the image as bytes and compressed because we have 1MB in the free version
-    _, compressed_image = cv2.imencode('.png', license_plate_image, [1, 90])
+    encode_params = [int(cv2.IMWRITE_JPEG_QUALITY),90]
+    _, compressed_image = cv2.imencode('.jpg', license_plate_image, encode_params)
     file_bytes = io.BytesIO(compressed_image)
 
     print("sending request to OCR.space")
@@ -58,7 +66,7 @@ def applyOCR(license_plate_image, img_file):
     # Apply the OCR.space on a compressed binary image 
     result = requests.post(url_api, 
                            files = {img_file: file_bytes},
-                           data = {'apikey': 'cd0de8a2a988957',
+                           data = {'apikey': 'yourapikey',
                                    'scale': True,
                                    'OCREngine': 2})
     
@@ -86,10 +94,14 @@ def isAuthorized(plate_number):
     # Conditions if this license plate number authorized or prohibited
     if  any(letter.isalpha() for letter in plate_number[:number_of_digits-1]):
         print("The license plate was read incorrectly.\nPlease get another image.")
+        if is_jpg_file_add:
+            os.remove(img_file)
         sys.exit(0)
         
     elif number_of_digits < 6 or number_of_digits > 8:
         print("Error! invalid number of digits in the license plate.\nPlease get another image.")
+        if is_jpg_file_add:
+            os.remove(img_file)
         sys.exit(0)
         
     elif any(letter.isalpha() for letter in plate_number):
@@ -130,6 +142,12 @@ def insertInfo(plate_number, decision_flag, rejection_reason):
 # Image File - example
 img_file = '13.png'
 
+is_jpg_file_add = False
+
+if '.png' in img_file:
+    img_file = convertPngToJpg(img_file)
+    is_jpg_file_add = True
+
 # Create my database with Mongo
 mongo_client = MongoClient('localhost', 27017)
 mydb = mongo_client['Parking-Lot']
@@ -149,6 +167,8 @@ try:
     detected_text = result_of_OCR.get('ParsedResults')[0].get('ParsedText')
 except:
     print("There is an Error during the process, please try again.", sys.exc_info()[0])
+    if is_jpg_file_add:
+        os.remove(img_file)
     sys.exit(0)
 
 # Arranges the number
@@ -159,6 +179,11 @@ is_authorized, rejection_reason = isAuthorized(plate_number)
 
 # Add new information to the mongo database
 insertInfo(plate_number, str(is_authorized), rejection_reason)
+
+# If we convert the png file, we need to remove him from our files
+# because it's added
+if is_jpg_file_add:
+    os.remove(img_file)
 
 print("Plate Number: ", plate_number)
 
