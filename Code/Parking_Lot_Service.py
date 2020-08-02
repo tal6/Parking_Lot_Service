@@ -88,9 +88,9 @@ def isAuthorized(plate_number):
         print("The license plate was read incorrectly.\nPlease get another image.")
         sys.exit(0)
         
-    elif number_of_digits < 6 and number_of_digits > 8:
+    elif number_of_digits < 6 or number_of_digits > 8:
         print("Error! invalid number of digits in the license plate.\nPlease get another image.")
-        sys_exit(0)
+        sys.exit(0)
         
     elif any(letter.isalpha() for letter in plate_number):
         print("Military and law enforcement vehicles are prohibited")
