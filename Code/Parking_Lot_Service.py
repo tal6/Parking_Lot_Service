@@ -148,7 +148,7 @@ print("finished pre OCR detection")
 try:
     detected_text = result_of_OCR.get('ParsedResults')[0].get('ParsedText')
 except:
-    print("There is an Error during the process, Please get another image.", sys.exc_info()[0])
+    print("There is an Error during the process, please try again.", sys.exc_info()[0])
     sys.exit(0)
 
 # Arranges the number
