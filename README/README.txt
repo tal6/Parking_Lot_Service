@@ -25,3 +25,4 @@ Second, Expend the options of the image and give the opportunity to input full i
 Credits
 Okay Dexter youtube channel for the MongoDB tutorials.
 Pysource youtube channel for the OCR.space tutorial. 
+TubeMint youtube channel for the setup tutorial about MongoDB.
