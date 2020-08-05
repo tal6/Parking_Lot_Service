@@ -92,12 +92,14 @@ def isAuthorized(plate_number):
     public_transportation_numbers = ['25', '26']
     
     # Conditions if this license plate number authorized or prohibited
+    # If there is letter in the middle of the plate number, it was not read correctly
     if  any(letter.isalpha() for letter in plate_number[:number_of_digits-1]):
         print("The license plate was read incorrectly.\nPlease get another image.")
         if is_jpg_file_add:
             os.remove(img_file)
         sys.exit(0)
-        
+    
+    # Israeli license plates has 6-8 digits/letters
     elif number_of_digits < 6 or number_of_digits > 8:
         print("Error! invalid number of digits in the license plate.\nPlease get another image.")
         if is_jpg_file_add:
