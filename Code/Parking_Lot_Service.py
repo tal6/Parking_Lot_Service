@@ -46,7 +46,7 @@ def preProccessing(img_file):
         
     license_plate_image_resized = cv2.resize(license_plate_image, (400,100), cv2.INTER_AREA)
     license_plate_image_gray = cv2.cvtColor(license_plate_image_resized, cv2.COLOR_BGR2GRAY)
-    license_plate_image_thresh = cv2.adaptiveThreshold(license_plate_image_gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 91, 9)
+    license_plate_image_thresh = cv2.adaptiveThreshold(license_plate_image_gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 91, 10)
     kernel = np.ones((5,5), np.uint8)
     license_plate_image_proccesed = cv2.morphologyEx(license_plate_image_thresh, cv2.MORPH_OPEN, kernel)
     return [license_plate_image_proccesed, license_plate_image_resized]
